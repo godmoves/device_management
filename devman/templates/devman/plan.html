@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Device Overview</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <!-- char.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+    <script src="/static/utils.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">Device Management</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'devman:overview' %}">Device Status</a></li>
+            <li class="active"><a href="{% url 'devman:plan' %}">Production Plan</a></li>
+            <li><a href="{% url 'devman:hist' %}">History Data</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+            <button type="button" class="btn btn-default btn-xs" style="font-size: 18px">
+              <span class=" glyphicon glyphicon-search"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div style="margin: 0 auto; width: 1200px">
+        <!-- plan nav start -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="">Plan 1</a></li>
+          <li role="presentation"><a href="">Plan 2</a></li>
+          <li role="presentation"><a href="">Plan 3</a></li>
+        </ul>
+        <!-- plan nav end -->
+
+        <!-- head line start -->
+        <div class="page-header">
+          <h2>Production Progress</h2>
+        </div>
+        <!-- head line end -->
+
+        <!-- progress bar start -->
+        <div class="progress">
+          <div class="progress-bar progress-bar-success" style="width: 79.4%"><span class="sr-only">complete</span></div>
+          <div class="progress-bar progress-bar-warning" style="width: 3.9%"><span class="sr-only">near overtime</span></div>
+          <div class="progress-bar progress-bar-danger" style="width: 1.45%"><span class="sr-only">overtime</span></div>
+        </div>
+        <!-- progress bar end -->
+
+        <!-- plan detail start -->
+        <div class="col-sm-3">
+          <div class="list-group">
+            <h4>
+              <a class="list-group-item active"><b>Plan Detail</b></a>
+              <a class="list-group-item"><b>Total:</b> {{ plan_total }}</a>
+              <a class="list-group-item"><b class="bg-success">Complete:</b> {{ plan_complete }}</a>
+              <a class="list-group-item"><b>Total delayed:</b> {{ plan_delay }}</a>
+              <a class="list-group-item"><b class="bg-warning">2-day delayed:</b> {{ plan_delay2 }}</a>
+              <a class="list-group-item"><b class="bg-danger">4-day delayed:</b> {{ plan_delay4 }}</a>
+            </h4>
+          </div>
+        </div>
+        <!-- plan detail end -->
+
+        <!-- device list start -->
+        <div class="col-sm-3">
+          <div class="list-group">
+            <h4>
+              <a class="list-group-item active"><b>Device List</b></a>
+              <a class="list-group-item"><b>Total:</b> {{ device_num }}</a>
+              <a class="list-group-item"><b class="bg-success">Running:</b> {{ device_running_num }}</a>
+              <a class="list-group-item"><b>Stop:</b> {{ device_stop_num }}</a>
+              <a class="list-group-item"><b class="bg-info">Repairing:</b> {{ device_repairing_num }}</a>
+              <a class="list-group-item"><b class="bg-danger">Error:</b> {{ device_error_num }}</a>
+            </h4>
+          </div>
+        </div>
+        <!-- device list end -->
+
+        <!-- plan pie chart start -->
+        <div id="canvas-holder" style="width: 45%" class="col-sm-3">
+          <canvas id="plan-chart"></canvas>
+        </div>
+        <script>
+          var not_do = "{{ plan_not_do|safe }}";
+          var complete = "{{ plan_complete|safe }}";
+          var delay2 = "{{ plan_delay2|safe }}";
+          var delay4 = "{{ plan_delay4|safe }}";
+
+          var config = {
+            type: 'pie',
+            data: {
+              datasets: [{
+                data: [
+                  not_do,  // not do
+                  complete, // complete
+                  delay2,   // 2-day delayed
+                  delay4,   // 4-day delayed
+                ],
+                backgroundColor: [
+                  window.chartColors.green,
+                  window.chartColors.blue,
+                  window.chartColors.yellow,
+                  window.chartColors.red,
+                  // window.chartColors.orange,
+                ],
+                label: 'Planned Job Completion Rate'
+              }],
+              labels: [
+                'WIP',
+                'Complete',
+                '2-d delayed',
+                '4-d delayed',
+              ]
+            },
+            options: {
+              responsive: true,
+              legend: {
+                position: 'bottom',
+              },
+              title: {
+                display: true,
+                text: 'Planned Job Completion Rate'
+              },
+            }
+          };
+
+          window.onload = function() {
+            var ctx = document.getElementById('plan-chart').getContext('2d');
+            window.myPie = new Chart(ctx, config);
+          };
+        </script>
+        <!-- plan pie chart end -->
+
+        <!-- plan table start -->
+        <div class="row">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Complete Today</th>
+                <th>Complete Accumulated</th>
+                <th>Delayed</th>
+                <th>% Complete</th>
+              </tr>
+            </thead>
+            <tbody>
+              <script type="text/javascript">
+                // Format js date
+                Date.prototype.Format = function (fmt) {
+                    var o = {
+                      "M+": this.getMonth() + 1, // Month
+                      "d+": this.getDate(), // Day
+                      "h+": this.getHours(), // Hour 
+                      "m+": this.getMinutes(), // Minute
+                      "s+": this.getSeconds(), // Second
+                      "q+": Math.floor((this.getMonth() + 3) / 3), // Season
+                      "S": this.getMilliseconds() // Millisecond
+                    };
+                    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                    for (var k in o)
+                    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                    return fmt;
+                }
+
+                function write_plan_table_item(num) {
+                  var total = "{{ plan_total|safe }}"
+                  var table_date = new Date();
+                  var accum_complete = complete;
+                  var today_complete = 194 + Math.round(Math.random() * 10);
+                  var today_delay = 107
+                  for (var i = 0; i < num; i++) {
+                    table_date.setDate(table_date.getDate() - 1);
+                    document.write("<tr><td>"+table_date.Format("yyyy-MM-dd")+"</td><td>"+today_complete+"</td><td>"+accum_complete+"</td><td>"+today_delay+"</td><td>"+(accum_complete/total*100).toFixed(2)+"%</td></tr>")
+                    accum_complete -= today_complete
+                    today_complete = 194 + Math.round(Math.random() * 10);
+                    today_delay = 94 + Math.round(Math.random() * 10);
+                  }
+                }
+
+                write_plan_table_item(8)
+              </script>
+            </tbody>
+          </table>
+        </div>
+        <!-- plan table end -->
+
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </body>
+</html>

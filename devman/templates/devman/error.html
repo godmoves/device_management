@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Device Overview</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <!-- char.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+    <script src="/static/utils.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">Device Management</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'devman:overview' %}">Device Status</a></li>
+            <li><a href="{% url 'devman:plan' %}">Production Plan</a></li>
+            <li><a href="{% url 'devman:hist' %}">History Data</a></li>
+            <li class="active"><a href="{% url 'devman:detail' device.id %}">Device Detail</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+            <button type="button" class="btn btn-default btn-xs" style="font-size: 18px">
+              <span class=" glyphicon glyphicon-search"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="margin: 0 auto; width: 1200px">
+      <!-- head nav tabs start -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation"><a href="{% url 'devman:detail' device.id %}">Device Detail</a></li>
+        <li role="presentation"><a href="{% url 'devman:repair' device.id %}">Maintenance History</a></li>
+        <li role="presentation" class="active"><a href="">Error History</a></li>
+      </ul>
+      <!-- head nav tabs end -->
+
+      <!-- head line start -->
+      <div class="page-header">
+        <h2>Error History of {{ device.device_name }}
+          <script type="text/javascript">
+            function display_device_status(status) {
+              if (status == "running") {
+                document.write("<span class='label label-success'>Running</span>")
+              } else if (status == "error") {
+                document.write("<span class='label label-danger'>Error</span>")
+              } else if (status == "repairing") {
+                document.write("<span class='label label-info'>Repairing</span>")
+              } else {
+                document.write("<span class='label label-default'>Stop</span>")
+              }
+            }
+
+            var status = "{{ device.device_status|safe }}"
+            display_device_status(status)
+          </script>
+        </h2>
+      </div>
+      <!-- head line end -->
+
+      <!-- error history table start -->
+      <div class="row">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>EVT Code</th>
+                <th>EVT Desc</th>
+                <th>EVT Type</th>
+                <th>EVT RType</th>
+                <th>EVT Date</th>
+                <th>EVT Status</th>
+                <th>EVT RStatus</th>
+                <th>EVT MRC</th>
+              </tr>
+            </thead>
+            <tbody>
+              <script type="text/javascript">
+                // Format js date
+                Date.prototype.Format = function (fmt) {
+                    var o = {
+                      "M+": this.getMonth() + 1, // Month
+                      "d+": this.getDate(), // Day
+                      "h+": this.getHours(), // Hour 
+                      "m+": this.getMinutes(), // Minute
+                      "s+": this.getSeconds(), // Second
+                      "q+": Math.floor((this.getMonth() + 3) / 3), // Season
+                      "S": this.getMilliseconds() // Millisecond
+                    };
+                    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                    for (var k in o)
+                    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                    return fmt;
+                }
+
+                function choose_random_item(list) {
+                  var len = list.length;
+                  var id = Math.floor(Math.random() * len);
+                  return list[id];
+                }
+
+                function write_repair_history_table_item(num) {
+                  var desc_arr = ["103桥吊俯仰齿轮箱中间轴磨损", "102桥吊俯仰齿轮箱中间轴磨损", "105桥吊1#起升联轴节磨损",
+                  "103桥吊前后小车牵引钢丝绳磨损", "115桥吊起升#2制动盘磨损","101桥吊小车后牵引钢丝绳磨损", 
+                  "102桥吊俯仰齿轮箱中间轴磨损", "105桥吊1#起升联轴节磨损", "103桥吊前后小车牵引钢丝绳磨损",
+                  "101桥吊小车后牵引钢丝绳磨损", "W111大车无", "水手间灯光故障", "105桥吊大车警报器故障", "102桥吊小车门限位故障",
+                  "219轮胎吊大车链条松紧度异常", "103桥吊小车门限位故障", "218小车控制屏照明故障"];
+                  var type_arr = ["AA", "MRC", "JOB", "PPM", "IN"];
+                  var status_arr = ["C", "GDGB", "R", "RPL", "REJ", "BK", "BLD"];
+
+                  var code = 10104;
+                  var desc = "";
+                  var type = "";
+                  var rtype = "";
+                  var date = new Date();
+                  var status = "";
+                  var rstatus = "";
+                  var mrc = "";
+
+                  for (var i = 0; i < num; i++) {
+                    code -= 1;
+                    desc = choose_random_item(desc_arr);
+                    type = choose_random_item(type_arr);
+                    rtype = choose_random_item(type_arr);
+                    date.setDate(date.getDate() - Math.floor(Math.random() * 10));
+                    status = choose_random_item(status_arr);
+                    rstatus = choose_random_item(status_arr);
+                    if (Math.random() > 0.7) {
+                      mrc = 5500 + Math.floor(Math.random() * 10);
+                    } else {
+                      mrc = "*";
+                    }
+                    document.write("<tr><td>"+code+"</td><td>"+desc+"</td><td>"+type+"</td><td>"+rtype+"</td><td>"+date.Format("yyyy-MM-dd")+"</td><td>"+status+"</td><td>"+rstatus+"</td><td>"+mrc+"</td><td>"+"</td></tr>")
+                  }
+                }
+
+                write_repair_history_table_item(80)
+              </script>
+            </tbody>
+          </table>
+        </div>
+        <!-- error history table end -->
+
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </body>
+</html>

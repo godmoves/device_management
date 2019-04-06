@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Device Overview</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <!-- char.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+    <script src="/static/utils.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">Device Management</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'devman:overview' %}">Device Status</a></li>
+            <li><a href="{% url 'devman:plan' %}">Production Plan</a></li>
+            <li><a href="{% url 'devman:hist' %}">History Data</a></li>
+            <li class="active"><a href="{% url 'devman:detail' device.id %}">Device Detail</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+            <button type="button" class="btn btn-default btn-xs" style="font-size: 18px">
+              <span class=" glyphicon glyphicon-search"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="margin: 0 auto; width: 1200px">
+      <!-- head nav tabs start -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="">Device Detail</a></li>
+        <li role="presentation"><a href="{% url 'devman:repair' device.id %}">Maintenance History</a></li>
+        <li role="presentation"><a href="{% url 'devman:error' device.id %}">Error History</a></li>
+      </ul>
+      <!-- head nav tabs end -->
+
+      <!-- head line start -->
+      <div class="page-header">
+        <h2>Device Detail</h2>
+      </div>
+      <!-- head line end -->
+
+      <!-- device info start -->
+      <div class="col-sm-5">
+        <div class="list-group">
+          <h4>
+            <a class="list-group-item active"><b>Device Info</b></a>
+            <a class="list-group-item"><b>Device ID:</b> {{ device.device_id }}</a>
+            <a class="list-group-item"><b>Device Type:</b> {{ device.device_type }}</a>
+            <a class="list-group-item"><b>Device Status:</b>
+              <script type="text/javascript">
+                function display_device_status(status) {
+                  if (status == "running") {
+                    document.write("<span class='label label-success'>Running</span>")
+                  } else if (status == "error") {
+                    document.write("<span class='label label-danger'>Error</span>")
+                  } else if (status == "repairing") {
+                    document.write("<span class='label label-info'>Repairing</span>")
+                  } else {
+                    document.write("<span class='label label-default'>Stop</span>")
+                  }
+                }
+
+                var status = "{{ device.device_status|safe }}"
+                display_device_status(status)
+              </script>
+            </a>
+            <a class="list-group-item"><b>Date Created:</b> {{ device.device_date }}</a>
+            <a class="list-group-item"><b>Sensor Number:</b> {{ device.sensor_set.count }}</a>
+          </h4>
+        </div>
+      </div>
+      <!-- device info end -->
+
+      <!-- sensor info start -->
+      <div class="col-sm-6">
+        <font size="5">Sensor Info</font>
+        <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Value</th>
+                <th>Last Update</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for sensor in device.sensor_set.all %}
+                <tr>
+                  <td>{{ sensor.sensor_name }}</td>
+                  <td>{{ sensor.sensor_id }}</td>
+                  <td>{{ sensor.sensor_value }}</td>
+                  <td>{{ sensor.sensor_date }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      </div>
+      <!-- sensor info end -->
+
+      <!-- history data chart start -->
+      <div style="margin: 0 auto; width: 1200px">
+        <canvas id="line-chart"></canvas>
+      </div>
+      <script>
+        function randomNumber(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+
+        function randomBar(date, lastClose) {
+          var open = randomNumber(lastClose * 0.95, lastClose * 1.05).toFixed(2);
+          var close = randomNumber(open * 0.95, open * 1.05).toFixed(2);
+          return {
+            t: date.valueOf(),
+            y: close
+          };
+        }
+
+        var dateFormat = 'MMMM DD YYYY';
+        var date = moment('March 01 2019', dateFormat);
+        var data = [randomBar(date, 30)];
+        while (data.length < 60) {
+          date = date.clone().add(1, 'd');
+          if (date.isoWeekday() <= 5) {
+            data.push(randomBar(date, data[data.length - 1].y));
+          }
+        }
+
+        var ctx = document.getElementById('line-chart').getContext('2d');
+        ctx.canvas.width = 1200;
+        ctx.canvas.height = 350;
+
+        var color = Chart.helpers.color;
+        var cfg = {
+          type: 'bar',
+          data: {
+            datasets: [{
+              label: 'History Data',
+              backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+              borderColor: window.chartColors.red,
+              data: data,
+              type: 'line',
+              pointRadius: 0,
+              fill: false,
+              lineTension: 0,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            scales: {
+              xAxes: [{
+                type: 'time',
+                distribution: 'series',
+                ticks: {
+                  source: 'data',
+                  autoSkip: true
+                }
+              }],
+              yAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Value'
+                }
+              }]
+            },
+            tooltips: {
+              intersect: false,
+              mode: 'index',
+              callbacks: {
+                label: function(tooltipItem, myData) {
+                  var label = myData.datasets[tooltipItem.datasetIndex].label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += parseFloat(tooltipItem.value).toFixed(2);
+                  return label;
+                }
+              }
+            }
+          }
+        };
+
+        var chart = new Chart(ctx, cfg);
+
+        document.getElementById('update').addEventListener('click', function() {
+          var type = document.getElementById('type').value;
+          chart.config.data.datasets[0].type = type;
+          chart.update();
+        });
+      </script>
+      <!-- history data chart end -->
+
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </body>
+</html>
