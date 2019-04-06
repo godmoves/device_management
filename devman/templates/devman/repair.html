@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Device Overview</title>
+    <title>维护历史</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -33,17 +33,17 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'devman:overview' %}">Device Management</a>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">设备管理</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="{% url 'devman:overview' %}">Device Status</a></li>
-            <li><a href="{% url 'devman:plan' %}">Production Plan</a></li>
-            <li><a href="{% url 'devman:hist' %}">History Data</a></li>
-            <li class="active"><a href="{% url 'devman:detail' device.id %}">Device Detail</a></li>
+            <li><a href="{% url 'devman:overview' %}">设备状态</a></li>
+            <li><a href="{% url 'devman:plan' %}">生产计划</a></li>
+            <li><a href="{% url 'devman:hist' %}">历史数据</a></li>
+            <li class="active"><a href="{% url 'devman:detail' device.id %}">设备详情</a></li>
           </ul>
           <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
+            <input type="text" class="form-control" placeholder="搜索...">
             <button type="button" class="btn btn-default btn-xs" style="font-size: 18px">
               <span class=" glyphicon glyphicon-search"></span>
             </button>
@@ -55,25 +55,25 @@
     <div class="container-fluid" style="margin: 0 auto; width: 1200px">
       <!-- head nav tabs start -->
       <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation"><a href="{% url 'devman:detail' device.id %}">Device Detail</a></li>
-        <li role="presentation" class="active"><a href="">Maintenance History</a></li>
-        <li role="presentation"><a href="{% url 'devman:error' device.id %}">Error History</a></li>
+        <li role="presentation"><a href="{% url 'devman:detail' device.id %}">设备详情</a></li>
+        <li role="presentation" class="active"><a href="">维护历史</a></li>
+        <li role="presentation"><a href="{% url 'devman:error' device.id %}">异常历史</a></li>
       </ul>
       <!-- head nav tabs end -->
 
       <!-- head line start -->
       <div class="page-header">
-        <h2>Maintenance History of {{ device.device_name }}
+        <h2>{{ device.device_name }}的维护历史
           <script type="text/javascript">
             function display_device_status(status) {
               if (status == "running") {
-                document.write("<span class='label label-success'>Running</span>")
+                document.write("<span class='label label-success'>运行中</span>")
               } else if (status == "error") {
-                document.write("<span class='label label-danger'>Error</span>")
+                document.write("<span class='label label-danger'>异常</span>")
               } else if (status == "repairing") {
-                document.write("<span class='label label-info'>Repairing</span>")
+                document.write("<span class='label label-info'>修理中</span>")
               } else {
-                document.write("<span class='label label-default'>Stop</span>")
+                document.write("<span class='label label-default'>停止</span>")
               }
             }
 
