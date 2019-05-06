@@ -20,6 +20,8 @@ class Sensor(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     sensor_name = models.CharField(max_length=50)
     sensor_id = models.CharField(max_length=50)
+    # Current there are 4 types available: hydraulic, bearing, trolley, gear
+    sensor_type = models.CharField(max_length=50, default="bearing")
     sensor_value = models.CharField(max_length=50)
     sensor_date = models.DateTimeField('sensor created')
 

@@ -24,7 +24,7 @@ class DeviceAdmin(admin.ModelAdmin):
 
 
 class SensorAdmin(admin.ModelAdmin):
-    list_display = ('sensor_name', 'sensor_id', 'sensor_value', 'sensor_date')
+    list_display = ('sensor_name', 'sensor_id', 'sensor_type', 'sensor_value', 'sensor_date')
 
     search_fields = ['sensor_name']
 

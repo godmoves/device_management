@@ -1,7 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render
 
-from .models import Device
+from .models import Device, Sensor
 
 
 def overview(request):
@@ -20,7 +20,7 @@ def overview(request):
                'device_repairing_num': device_repairing_num,
                'device_error_num': device_error_num,
                'side_bar': side_bar}
-    return render(request, 'devman/index.html', context)
+    return render(request, 'devman/overview.html', context)
 
 
 def detail(request, device_id):
@@ -78,6 +78,22 @@ def plan(request):
 def hist(request):
     return render(request, 'devman/hist.html', {})
 
+
+def sensor(request, sensor_type, sensor_id):
+    try:
+        sensor = Sensor.objects.get(pk=sensor_id)
+    except Sensor.DoesNotExist:
+        raise Http404('Sensor does not exist')
+    if sensor_type == 'hydraulic':
+        return render(request, 'devman/sensor_hydraulic.html', {'sensor': sensor})
+    elif sensor_type == 'bearing':
+        return render(request, 'devman/sensor_bearing.html', {'sensor': sensor})
+    elif sensor_type == 'trolley':
+        return render(request, 'devman/sensor_trolley.html', {'sensor': sensor})
+    elif sensor_type == 'gear':
+        return render(request, 'devman/sensor_gear.html', {'sensor': sensor})
+    else:
+        raise Http404('Sensor type does not exist')
 
 def device_error(request):
     device_list = Device.objects.filter(device_status='error')

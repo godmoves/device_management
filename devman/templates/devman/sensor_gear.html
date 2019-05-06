@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>传感器详情</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <!-- char.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+    <script src="/static/utils.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">设备管理</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'devman:overview' %}">设备状态</a></li>
+            <li><a href="{% url 'devman:plan' %}">生产计划</a></li>
+            <li><a href="{% url 'devman:hist' %}">历史数据</a></li>
+            <li class="active"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id %}">传感器详情</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="搜索...">
+            <button type="button" class="btn btn-default btn-xs" style="font-size: 18px">
+              <span class=" glyphicon glyphicon-search"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="margin: 0 auto; width: 1200px">
+      <!-- head line start -->
+      <div class="page-header">
+        <h2>小车轨道-齿轮系统</h2>
+      </div>
+      <!-- head line end -->
+
+      <!-- info input start -->
+      <div class="container-fluid" style="margin: 0 auto; width: 1000px">
+        <form role="form">
+          <div class="form-group">
+            <label for="name">零部件类型：</label>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">小车齿轮
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">请选择类型</a></li>
+                <li class="divider"></li>
+                <li>
+                  <!-- TODO: this link is hard-coded -->
+                  <a href="{% url 'devman:sensor' 'trolley' 5 %}">小车轨道</a>
+                </li>
+                <li>
+                  <!-- TODO: this link is hard-coded -->
+                  <a href="{% url 'devman:sensor' 'gear' 6 %}">小车齿轮</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="name">更换时间：</label>
+            <select id="year" onclick="FillDate(1)"></select> 年
+            <select id="month" onclick="FillDate(1)"></select> 月
+            <select id="date"></select> 日
+            <script type="text/javascript">
+              function FillYear() {
+            　　var b = new Date();
+            　　var year = parseInt(b.getFullYear());
+                 
+            　　var str = "";
+                 
+            　　for (var i = year-5; i < year+6; i++) {
+            　　　　if (i == year) {
+            　　　　　str = str + "<option selected='selected' value='" + i + "'>"+i+"</option>";
+            　　　　} else {
+            　　　　　str = str + "<option value='" + i + "'>" + i + "</option>";
+            　　　　}
+            　　}
+            　　document.getElementById("year").innerHTML = str;
+              }
+
+              function FillMonth() {
+              　　var b = new Date();
+                  var month = parseInt(b.getMonth() + 1);
+                   
+                  var str = "";
+                  for (var i = 1; i < 13; i++) {
+                    if(i == month) {
+                    　str = str + "<option selected='selected' value='" + i + "'>" + i + "</option>";
+                    } else {
+                    　str = str + "<option value='" + i + "'>" + i + "</option>";
+                    }
+                  }
+                  document.getElementById("month").innerHTML = str;
+              }
+
+              function FillDate(default_date=0) {
+                var b = new Date();
+
+                if (default_date == 0) {
+                  var date = parseInt(b.getDate());
+                } else {
+                  var date = default_date;
+                }
+                 
+                var month = document.getElementById("month").value;
+                var year = document.getElementById("year").value;
+                var ts = 31;
+
+                if (month == 4 || month == 6 || month == 9 || month == 11) {
+                  ts = 30;
+                }
+                 
+                if (month == 2) {　
+                  if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
+                    ts = 29;
+                  } else {
+                    ts = 28;
+                  }
+                }
+                 
+                var str = "";
+                for (var i = 1; i< ts+1; i++) {
+                  if (i == date) {
+                    str = str + "<option  selected='selected' value='" + i + "'>" + i + "</option>";
+                  } else {
+                    str = str + "<option value='" + i + "'>" + i + "</option>";
+                  }
+                }
+                document.getElementById("date").innerHTML = str;
+              }
+
+              FillYear();
+              FillMonth();
+              FillDate();
+            </script>
+          </div>
+          <div class="form-group">
+            <label for="name">操作员： </label>
+            <input id="operator" type="text" placeholder="请输入操作员..." size="10"> 对轨道进行提前预防维护
+          </div>
+          <div class="form-group">
+            预计下次更换时间为
+            <input id="outYear" type="text" size="10" disabled>
+            年
+            <input id="outMonth" type="text" size="10" disabled>
+            月
+            <input id="outDate" type="text" size="10" disabled>
+            日
+          </div>
+          <div class="form-group">
+            请做好备件准备
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary" onclick="CheckSubmit()">提交</button>
+            <script type="text/javascript">
+              function CheckSubmit() {
+                var operator = document.getElementById("operator").value;
+                if (operator == "") {
+                  document.getElementById("operator").style = "border:1.5px solid red";
+                }
+              }
+            </script>
+          </div>
+        </form>
+      </div>
+      <!-- info input end -->
+
+      <!-- history table start -->
+      <div class="row" style="margin: 0 auto; width: 1000px">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>操作时间</th>
+              <th>操作类型</th>
+              <th>操作人</th>
+            </tr>
+          </thead>
+          <tbody>
+            <script type="text/javascript">
+              // Format js date
+              Date.prototype.Format = function (fmt) {
+                  var o = {
+                    "M+": this.getMonth() + 1, // Month
+                    "d+": this.getDate(), // Day
+                    "h+": this.getHours(), // Hour 
+                    "m+": this.getMinutes(), // Minute
+                    "s+": this.getSeconds(), // Second
+                    "q+": Math.floor((this.getMonth() + 3) / 3), // Season
+                    "S": this.getMilliseconds() // Millisecond
+                  };
+                  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                  for (var k in o)
+                  if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                  return fmt;
+              }
+
+              function choose_random_item(list) {
+                  var len = list.length;
+                  var id = Math.floor(Math.random() * len);
+                  return list[id];
+              }
+
+              function select_operation_type() {
+                var arr = ["小车齿轮-更换", "小车轨道-维修", "小车轨道-更换"];
+                return choose_random_item(arr);
+              }
+
+              function select_operator() {
+                var arr = ["操作员1", "操作员2", "操作员3", "操作员4", "操作员5"];
+                return choose_random_item(arr);
+              }
+
+              function write_table_item(num) {
+                var table_date = new Date();
+                var last_update = Math.round(Math.random() * 10);
+                for (var i = 0; i < num; i++) {
+                  table_date.setDate(table_date.getDate() - last_update);
+                  var str = "<tr>";
+                  str = str + "<td>" + table_date.Format("yyyy-MM-dd") + "</td>";
+                  str = str + "<td>" + select_operation_type() + "</td>";
+                  str = str + "<td>" + select_operator() + "</td>";
+                  str = str + "</tr>"
+
+                  document.write(str)
+                  last_update = last_update +  Math.round(Math.random() * 10);
+                }
+              }
+
+              write_table_item(8)
+            </script>
+          </tbody>
+        </table>
+      </div>
+      <!-- history table end -->
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </body>
+</html>
