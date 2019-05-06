@@ -101,7 +101,7 @@
 
       <!-- crane figure start -->
       <div class="col-sm-5">
-        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556604727509&di=99a4628f42239d8b0d6e2c1c1f586984&imgtype=0&src=http%3A%2F%2Fwww.tailizhineng.com%2FimageRepository%2F8fb5dd6e-4341-48f2-a29b-bb4ee90a66b6.jpg" class="img-rounded" height="350">
+        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556604727509&di=99a4628f42239d8b0d6e2c1c1f586984&imgtype=0&src=http%3A%2F%2Fwww.tailizhineng.com%2FimageRepository%2F8fb5dd6e-4341-48f2-a29b-bb4ee90a66b6.jpg" class="img-rounded" height="350"/>
       </div>
       <!-- crane figure end -->
 
@@ -150,7 +150,7 @@
             <tbody>
               {% for sensor in device.sensor_set.all %}
                 <tr>
-                  <td><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id %}">{{ sensor.sensor_name }}</a></td>
+                  <td><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'data' %}">{{ sensor.sensor_name }}</a></td>
                   <td>{{ sensor.sensor_type }}</td>
                   <td>{{ sensor.sensor_value }}</td>
                   <td>{{ sensor.sensor_date }}</td>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>传感器详情</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <!-- char.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+    <script src="/static/utils.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">设备管理</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'devman:overview' %}">设备状态</a></li>
+            <li><a href="{% url 'devman:plan' %}">生产计划</a></li>
+            <li><a href="{% url 'devman:hist' %}">历史数据</a></li>
+            <li class="active"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'data' %}">传感器详情</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="搜索...">
+            <button type="button" class="btn btn-default btn-xs" style="font-size: 18px">
+              <span class=" glyphicon glyphicon-search"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="margin: 0 auto; width: 1200px">
+      <div class="page-header">
+        <h3>液压系统数据</h3>
+      </div>
+
+      <!-- or another darker gray DCDCDC -->
+      <div class="col-md-4" style="background: #F5F5F5; margin-left: 40px;">
+        <div class="row" style="text-align:center">
+          <h1>
+            <span class="label label-primary">&nbsp;&nbsp;&nbsp;冷却器&nbsp;&nbsp;&nbsp;</span>
+          </h1>
+        </div>
+        <div class="row" align="center">
+          <br/><br/>
+          <img src="/static/medias/cooler.png" width="300"/>
+          <br/><br/><br/>
+        </div>
+        <div class="row" style="background: #FFFFFF">
+          <br/>
+        </div>
+        <div class="row" style="text-align:center">
+          <br/>
+          <button type="button" class="btn btn-success">预测采样数</button>
+          <input type="text" size="10" value="100">
+          <br/>
+          <div class="row" style="margin-top: 15px">
+            <a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'data' %}"><button type="button" class="btn btn-default">&nbsp;返回&nbsp;</button></a>
+          </div>
+          <br/>
+        </div>
+      </div>
+      
+      <div class="col-md-7" style="background: #F5F5F5; margin-left: 20px;">
+        <h3>状态判断</h3>
+        <div class="row" style="margin-left: 60px;">
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-primary">状态0</span>
+            </h2>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-primary">状态1</span>
+            </h2>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-primary">状态2</span>
+            </h2>
+          </div>
+        </div>
+        <div class="row" style="margin-left: 68px;">
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-default">0.03</span>
+            </h2>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-success">0.93</span>
+            </h2>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-default">0.04</span>
+            </h2>
+          </div>
+        </div>
+        <div class="row" align="center">
+          <br/>
+          <img src="/static/medias/hydraulic_result_1.png" width="600"/>
+        </div>
+        <hr style="height:2px; border:none; border-top:2px dashed #555555;"/>
+        <div class="row" style="text-align:center">
+          <button type="button" class="btn btn-default">诊断结果</button>
+          &nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-warning">接近失效</button>
+        </div>
+        <br/>
+      </div>
+
+<!--       <div class="col-md-7" style="background: #F5F5F5; margin-left: 20px;">
+        <h3>状态判断</h3>
+        <div class="row" style="margin-left: 60px;">
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-primary">状态0</span>
+            </h2>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-primary">状态1</span>
+            </h2>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-primary">状态2</span>
+            </h2>
+          </div>
+        </div>
+        <div class="row" style="margin-left: 68px;">
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-default">0.12</span>
+            </h2>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-default">0.04</span>
+            </h2>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-2">
+            <h2>
+              <span class="label label-default">0.04</span>
+            </h2>
+          </div>
+        </div>
+        <div class="row" align="center">
+          <br/>
+          <img src="/static/medias/hydraulic_result_2.png" width="600"/>
+        </div>
+        <hr style="height:2px; border:none; border-top:2px dashed #555555;"/>
+        <div class="alert alert-danger" role="alert">
+          <strong>诊断失败！</strong> 请进行人工诊断
+        </div>
+        <div class="row" style="text-align:center">
+          <button type="button" class="btn btn-default">请输入实际状态</button>
+          &nbsp;&nbsp;&nbsp;
+          <input type="text" size="10" value="100">
+        </div>
+        <br/>
+      </div>
+
+    </div> -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </body>
+</html>

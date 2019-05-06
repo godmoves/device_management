@@ -79,15 +79,23 @@ def hist(request):
     return render(request, 'devman/hist.html', {})
 
 
-def sensor(request, sensor_type, sensor_id):
+def sensor(request, sensor_type, sensor_id, catagory=""):
     try:
         sensor = Sensor.objects.get(pk=sensor_id)
     except Sensor.DoesNotExist:
         raise Http404('Sensor does not exist')
     if sensor_type == 'hydraulic':
-        return render(request, 'devman/sensor_hydraulic.html', {'sensor': sensor})
+        if catagory == 'result':
+            return render(request, 'devman/sensor_hydraulic_result.html', {'sensor': sensor})
+        else:
+            return render(request, 'devman/sensor_hydraulic_data.html', {'sensor': sensor})
     elif sensor_type == 'bearing':
-        return render(request, 'devman/sensor_bearing.html', {'sensor': sensor})
+        if catagory == 'health':
+            return render(request, 'devman/sensor_bearing_health.html', {'sensor': sensor})
+        elif catagory == 'life':
+            return render(request, 'devman/sensor_bearing_life.html', {'sensor': sensor})
+        else:
+            return render(request, 'devman/sensor_bearing_data.html', {'sensor': sensor})
     elif sensor_type == 'trolley':
         return render(request, 'devman/sensor_trolley.html', {'sensor': sensor})
     elif sensor_type == 'gear':

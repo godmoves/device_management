@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>传感器详情</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <!-- char.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+    <script src="/static/utils.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">设备管理</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'devman:overview' %}">设备状态</a></li>
+            <li><a href="{% url 'devman:plan' %}">生产计划</a></li>
+            <li><a href="{% url 'devman:hist' %}">历史数据</a></li>
+            <li class="active"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'data' %}">传感器详情</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="搜索...">
+            <button type="button" class="btn btn-default btn-xs" style="font-size: 18px">
+              <span class=" glyphicon glyphicon-search"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="margin: 0 auto; width: 1200px">
+      <!-- head nav tabs start -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'data' %}">轴承数据</a></li>
+        <li role="presentation"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'health' %}">健康指标预测</a></li>
+        <li role="presentation" class="active"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'life' %}">剩余寿命预测</a></li>
+      </ul>
+      <!-- head nav tabs end -->
+
+      <br/>
+      <div class="row" style="margin: 0 auto; width: 1000px">
+        <div class="col-md-4">
+          <font size="4">
+            当前使用时间
+            <input id="outYear" type="text" size="13" disabled>
+          </font>
+        </div>
+        <div class="col-md-4">
+          <font size="4">
+            剩余寿命
+            <input id="outYear" type="text" size="13" disabled>
+          </font>
+        </div>
+      </div>
+
+      <br/>
+      <div class="row" style="margin: 0 auto; width: 1000px">
+        <img src="/static/medias/bearing_life_1.jpg" width="1000" />
+      </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </body>
+</html>
