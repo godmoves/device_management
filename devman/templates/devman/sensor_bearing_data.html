@@ -67,12 +67,136 @@
       <div class="row">
         <div class="col-md-3">
           <div class="list-group">
-            <a href="" class="list-group-item active">横向振动信号</a>
-            <a href="" class="list-group-item">纵向振动信号</a>
+            <a id="databtn1" class="list-group-item active" onclick="changeDataState(this)">横向振动信号</a>
+            <a id="databtn2" class="list-group-item" onclick="changeDataState(this)">纵向振动信号</a>
           </div>
+          <script type="text/javascript">
+            function changeDataState(element) {
+              if (document.getElementById(element.id).className == "list-group-item") {
+                // Update dataset after we change the data catagory
+                signal_cfg.data.datasets.forEach(function(dataset) {
+                  dataset.data = randomSignalDataset(totalSignalNum);
+                });
+
+                signal_chart.update();
+              }
+
+              // Switch data catagory display
+              if (element.id == "databtn1") {
+                document.getElementById("databtn1").className = "list-group-item active";
+                document.getElementById("databtn2").className = "list-group-item";
+              } else {
+                document.getElementById("databtn1").className = "list-group-item";
+                document.getElementById("databtn2").className = "list-group-item active";
+              }
+            }
+          </script>
         </div>
         <div class="col-md-9">
-          <img src="/static/medias/bearing_data_1.png" width="800"/>
+          <!-- data chart start -->
+          <div style="margin: 0 auto;">
+            <canvas id="line-chart-one"></canvas>
+          </div>
+          <script>
+            function randomNumber(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
+            function randomBar(date, lastClose) {
+              var open = randomNumber(lastClose * 0.95, lastClose * 1.05).toFixed(2);
+              var close = randomNumber(open * 0.95, open * 1.05).toFixed(2);
+              return {
+                t: date.valueOf(),
+                y: close
+              };
+            }
+
+            function randomSignalData(date, totalNum, currNum) {
+              var point = 300.0 / (totalNum - currNum + 10);
+              point = point + Math.random() * point / 2;
+              if (currNum % 2 == 0) {
+                point = -point;
+              }
+              point = point.toFixed(2);
+              return {
+                t: date.valueOf(),
+                y: point
+              };
+            }
+
+            function randomSignalDataset(totalNum) {
+              var dateFormat = 'MMMM DD YYYY';
+              var signal_date = moment('March 01 2019', dateFormat);
+              var signal_data = [randomSignalData(signal_date, totalNum, 1)];
+              while (signal_data.length < totalNum) {
+                signal_date = signal_date.clone().add(1, 'd');
+                if (signal_date.isoWeekday() <= 5) {
+                  signal_data.push(randomSignalData(signal_date, totalNum, signal_data.length + 1));
+                }
+              }
+              return signal_data;
+            }
+
+            var totalSignalNum = 500;
+            signal_data = randomSignalDataset(totalSignalNum);
+
+            var signal_ctx = document.getElementById('line-chart-one').getContext('2d');
+            signal_ctx.canvas.width = 1200;
+            signal_ctx.canvas.height = 500;
+
+            var color = Chart.helpers.color;
+            var signal_cfg = {
+              type: 'bar',
+              data: {
+                datasets: [{
+                  label: '横向振动信号',
+                  backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+                  borderColor: window.chartColors.blue,
+                  data: signal_data,
+                  type: 'line',
+                  pointRadius: 0,
+                  fill: false,
+                  lineTension: 0,
+                  borderWidth: 2
+                }]
+              },
+              options: {
+                scales: {
+                  xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
+                    ticks: {
+                      source: 'data',
+                      autoSkip: true
+                    }
+                  }],
+                  yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Value'
+                    }
+                  }]
+                },
+                tooltips: {
+                  intersect: false,
+                  mode: 'index',
+                  callbacks: {
+                    label: function(tooltipItem, myData) {
+                      var label = myData.datasets[tooltipItem.datasetIndex].label || '';
+                      if (label) {
+                        label += ': ';
+                      }
+                      label += parseFloat(tooltipItem.value).toFixed(2);
+                      return label;
+                    }
+                  }
+                }
+              }
+            };
+
+            var signal_chart = new Chart(signal_ctx, signal_cfg);
+          </script>
+          <!-- data chart end -->
         </div>
       </div>
 
@@ -82,49 +206,150 @@
       <div class="row">
         <div class="col-md-3">
           <div class="list-group">
-            <a href="" class="list-group-item active">时域RS特征</a>
-            <a href="" class="list-group-item">频域RS特征</a>
-            <a href="" class="list-group-item">能量特征</a>
+            <a id="featurebtn1" onclick="changeFeatureState(this)" class="list-group-item active">时域RS特征</a>
+            <a id="featurebtn2" onclick="changeFeatureState(this)" class="list-group-item">频域RS特征</a>
+            <a id="featurebtn3" onclick="changeFeatureState(this)" class="list-group-item">能量特征</a>
           </div>
           <div class="list-group">
-            <a href="" class="list-group-item active">相关系数</a>
-            <a href="" class="list-group-item">0.9</a>
+            <a class="list-group-item active">相关系数</a>
+            <a id="r_coeff" class="list-group-item">0.85</a>
           </div>
+          <script type="text/javascript">
+            function changeFeatureState(element) {
+              if (document.getElementById(element.id).className == "list-group-item") {
+                // Update dataset after we change the data catagory
+                feature_cfg.data.datasets.forEach(function(dataset) {
+                  dataset.data = randomFeatureDataset(seg1, seg2, seg3);
+                });
+
+                feature_chart.update();
+
+                document.getElementById("r_coeff").innerHTML = randomNumber(0.8, 0.9).toFixed(2);
+              }
+
+              // Switch data catagory display
+              if (element.id == "featurebtn1") {
+                document.getElementById("featurebtn1").className = "list-group-item active";
+                document.getElementById("featurebtn2").className = "list-group-item";
+                document.getElementById("featurebtn3").className = "list-group-item";
+              } else if (element.id == "featurebtn2") {
+                document.getElementById("featurebtn1").className = "list-group-item";
+                document.getElementById("featurebtn2").className = "list-group-item active";
+                document.getElementById("featurebtn3").className = "list-group-item";
+              } else {
+                document.getElementById("featurebtn1").className = "list-group-item";
+                document.getElementById("featurebtn2").className = "list-group-item";
+                document.getElementById("featurebtn3").className = "list-group-item active";
+              }
+            }
+          </script>
         </div>
         <div class="col-md-9">
-          <img src="/static/medias/bearing_data_2.png" width="800" height="350"/>
+          <!-- feature chart start -->
+          <div style="margin: 0 auto;">
+            <canvas id="line-chart-two"></canvas>
+          </div>
+          <script type="text/javascript">
+            function randomSignalFeature(date, startValue, endValue, totalNum, currNum) {
+              var baseValue = (endValue - startValue) * (currNum / totalNum) + startValue;
+              var fakeValue =  randomNumber(0.7 * baseValue, 1.3 * baseValue);
+              fakeValue = fakeValue.toFixed(2);
+              return {
+                t: date.valueOf(),
+                y: fakeValue
+              }
+            }
+
+            function randomFeatureDataset(seg1, seg2,seg3) {
+              var dateFormat = 'MMMM DD YYYY';
+              var date = moment('March 01 2019', dateFormat);
+              var data = [randomSignalFeature(date, 0.7, 0.3, 100, 0)];
+              while (data.length < seg1) {
+                date = date.clone().add(1, 'd');
+                if (date.isoWeekday() <= 5) {
+                  data.push(randomSignalFeature(date, 0.7, 0.3, seg1, data.length));
+                }
+              }
+              while (data.length < seg2) {
+                date = date.clone().add(1, 'd');
+                if (date.isoWeekday() <= 5) {
+                  data.push(randomSignalFeature(date, 0.3, 0.1, seg2 - seg1, data.length - seg1));
+                }
+              }
+              while (data.length < seg3) {
+                date = date.clone().add(1, 'd');
+                if (date.isoWeekday() <= 5) {
+                  data.push(randomSignalFeature(date, 0.1, 0.0, seg3 - seg2, data.length - seg2));
+                }
+              }
+              return data;
+            }
+
+            var seg1 = 100;
+            var seg2 = 400;
+            var seg3 = 700;
+            feature_data = randomFeatureDataset(seg1, seg2, seg3);
+
+            var feature_ctx = document.getElementById('line-chart-two').getContext('2d');
+            feature_ctx.canvas.width = 1200;
+            feature_ctx.canvas.height = 500;
+
+            var color = Chart.helpers.color;
+            var feature_cfg = {
+              type: 'bar',
+              data: {
+                datasets: [{
+                  label: '时域RS特征',
+                  backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+                  borderColor: window.chartColors.blue,
+                  data: feature_data,
+                  type: 'line',
+                  pointRadius: 0,
+                  fill: false,
+                  lineTension: 0,
+                  borderWidth: 2
+                }]
+              },
+              options: {
+                scales: {
+                  xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
+                    ticks: {
+                      source: 'data',
+                      autoSkip: true
+                    }
+                  }],
+                  yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Value'
+                    }
+                  }]
+                },
+                tooltips: {
+                  intersect: false,
+                  mode: 'index',
+                  callbacks: {
+                    label: function(tooltipItem, myData) {
+                      var label = myData.datasets[tooltipItem.datasetIndex].label || '';
+                      if (label) {
+                        label += ': ';
+                      }
+                      label += parseFloat(tooltipItem.value).toFixed(2);
+                      return label;
+                    }
+                  }
+                }
+              }
+            };
+
+            var feature_chart = new Chart(feature_ctx, feature_cfg);
+          </script>
+          <!-- feature chart end -->
+
         </div>
       </div>
-
-<!--       <div class="col-sm-3 col-md-2 sidebar">
-        <ul class="nav nav-sidebar">
-          <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-          <li><a href="#">Reports</a></li>
-          <li><a href="#">Analytics</a></li>
-          <li><a href="#">Export</a></li>
-        </ul>
-        <ul class="nav nav-sidebar">
-          <li><a href="">Nav item</a></li>
-          <li><a href="">Nav item again</a></li>
-          <li><a href="">One more nav</a></li>
-          <li><a href="">Another nav item</a></li>
-          <li><a href="">More navigation</a></li>
-        </ul>
-        <ul class="nav nav-sidebar">
-          <li><a href="">Nav item again</a></li>
-          <li><a href="">One more nav</a></li>
-          <li><a href="">Another nav item</a></li>
-        </ul>
-      </div>
-
-      <div class="col-md-offset-2 main">
-        <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'data' %}">轴承数据</a></li>
-          <li role="presentation"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'health' %}">健康指标预测</a></li>
-          <li role="presentation"><a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'life' %}">剩余寿命预测</a></li>
-        </ul>
-      </div> -->
-
     </div>
 
     <!-- Bootstrap core JavaScript

@@ -119,7 +119,7 @@ def device_error(request):
                'device_repairing_num': device_repairing_num,
                'device_error_num': device_error_num,
                'side_bar': side_bar}
-    return render(request, 'devman/index.html', context)
+    return render(request, 'devman/overview.html', context)
 
 
 def device_repairing(request):
@@ -138,7 +138,7 @@ def device_repairing(request):
                'device_repairing_num': device_repairing_num,
                'device_error_num': device_error_num,
                'side_bar': side_bar}
-    return render(request, 'devman/index.html', context)
+    return render(request, 'devman/overview.html', context)
 
 
 def device_running(request):
@@ -157,7 +157,7 @@ def device_running(request):
                'device_repairing_num': device_repairing_num,
                'device_error_num': device_error_num,
                'side_bar': side_bar}
-    return render(request, 'devman/index.html', context)
+    return render(request, 'devman/overview.html', context)
 
 
 def device_stop(request):
@@ -176,4 +176,4 @@ def device_stop(request):
                'device_repairing_num': device_repairing_num,
                'device_error_num': device_error_num,
                'side_bar': side_bar}
-    return render(request, 'devman/index.html', context)
+    return render(request, 'devman/overview.html', context)

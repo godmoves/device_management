@@ -66,22 +66,154 @@
         <div class="col-md-4">
           <font size="4">
             当前使用时间
-            <input id="outYear" type="text" size="13" disabled>
+            <input id="outYear" type="text" size="13" value="1020 hours" disabled>
           </font>
         </div>
         <div class="col-md-4">
           <font size="4">
             剩余寿命
-            <input id="outYear" type="text" size="13" disabled>
+            <input id="outYear" type="text" size="13" value="120 hours" disabled>
           </font>
         </div>
       </div>
 
       <br/>
       <div class="row" style="margin: 0 auto; width: 1000px">
-        <img src="/static/medias/bearing_life_1.jpg" width="1000" />
-      </div>
+        <!-- <img src="/static/medias/bearing_life_1.jpg" width="1000" /> -->
+        <div style="width:100%;">
+          <canvas id="canvas"></canvas>
+        </div>
+        <br/><br/>
+        <script>
+          var timeFormat = 'MM/DD/YYYY HH:mm';
 
+          function newDate(days) {
+            return moment().add(days, 'd').toDate();
+          }
+
+          function newDateString(days) {
+            return moment().add(days, 'd').format(timeFormat);
+          }
+
+          function randomNumber(min, max) {
+            return Math.random() * (max - min) + min;
+          }
+
+          function LifeLine(x) {
+            var y = 2.1306e-12 *  Math.pow(x, 4) + 
+                    -4.4601e-9 * Math.pow(x, 3) + 
+                    2.4604e-6 * Math.pow(x, 2) +
+                    6.6933e-4 * x;
+            return y;
+          }
+
+          function newLifeLine(totalNum) {
+            var labels = [];
+            var mids = [];
+            var ups = [];
+            var downs = [];
+            var rands = [];
+            for (var i = 0; i < totalNum; i = i + 30) {
+              labels.push(i.toFixed(0));
+              var tmp = LifeLine(i) + 0.05;
+              mids.push(tmp);
+              if (i < 1000) {
+                ups.push(tmp + 0.05);
+                downs.push(tmp - 0.05);
+                rands.push(tmp + randomNumber(-0.04, 0.04));
+              } else {
+                ups.push((1 + 0.1 * (i - 1000) / 200) * tmp + 0.05);
+                downs.push((1 - 0.1 * (i - 1000) / 200) * tmp - 0.05);
+              }
+            }
+            return [labels, mids, ups, downs, rands];
+          }
+
+          var res = newLifeLine(1200);
+          var myLabels = res[0];
+          var myMids = res[1];
+          var myUps = res[2];
+          var myDowns = res[3];
+          var myRands = res[4];
+
+          var color = Chart.helpers.color;
+          var config = {
+            type: 'line',
+            data: {
+              labels: myLabels,
+              datasets: [{
+                label: '拟合值',
+                backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+                borderColor: window.chartColors.blue,
+                fill: false,
+                pointRadius: 0,
+                data: myMids,
+              }, {
+                label: '置信区间上界',
+                backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
+                borderColor: window.chartColors.green,
+                fill: false,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                data: myUps,
+              }, {
+                label: '置信区间下界',
+                backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
+                borderColor: window.chartColors.green,
+                fill: false,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                data: myDowns,
+              }, {
+                label: '真实值',
+                backgroundColor: color(window.chartColors.grey).alpha(0.5).rgbString(),
+                borderColor: 'rgb(141, 143, 147)',
+                fill: false,
+                data: myRands,
+              }]
+            },
+            options: {
+              title: {
+                text: 'Chart.js Time Scale'
+              },
+              scales: {
+                xAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Date'
+                  }
+                }],
+                yAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Value'
+                  }
+                }]
+              },
+            }
+          };
+
+          window.onload = function() {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            window.myLine = new Chart(ctx, config);
+
+          };
+
+          document.getElementById('randomizeData').addEventListener('click', function() {
+            config.data.datasets.forEach(function(dataset) {
+              dataset.data.forEach(function(dataObj, j) {
+                if (typeof dataObj === 'object') {
+                  dataObj.y = randomScalingFactor();
+                } else {
+                  dataset.data[j] = randomScalingFactor();
+                }
+              });
+            });
+
+            window.myLine.update();
+          });
+        </script>
+      </div>
     </div>
 
     <!-- Bootstrap core JavaScript

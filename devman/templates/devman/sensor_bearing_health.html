@@ -68,26 +68,134 @@
       <div class="row">
         <div class="col-md-3">
           <div class="list-group">
-            <a href="" class="list-group-item active">时域RS特征</a>
-            <a href="" class="list-group-item">频域RS1</a>
-            <a href="" class="list-group-item">频域RS2</a>
-            <a href="" class="list-group-item">频域RS3</a>
-            <a href="" class="list-group-item">频域RS4</a>
-            <a href="" class="list-group-item">能量特征</a>
-            <a href="" class="list-group-item">子频带1</a>
-            <a href="" class="list-group-item">子频带2</a>
-            <a href="" class="list-group-item">子频带3</a>
-            <a href="" class="list-group-item">子频带4</a>
-            <a href="" class="list-group-item">子频带5</a>
-            <a href="" class="list-group-item">子频带6</a>
-            <a href="" class="list-group-item">子频带7</a>
-            <a href="" class="list-group-item">子频带8</a>
+            <a id="btn1" class="list-group-item active" onclick="changeState(this)">时域RS特征</a>
+            <a id="btn2" class="list-group-item" onclick="changeState(this)">频域RS1</a>
+            <a id="btn3" class="list-group-item" onclick="changeState(this)">频域RS2</a>
+            <a id="btn4" class="list-group-item" onclick="changeState(this)">频域RS3</a>
+            <a id="btn5" class="list-group-item" onclick="changeState(this)">频域RS4</a>
+            <a id="btn6" class="list-group-item" onclick="changeState(this)">能量特征</a>
+            <a id="btn7" class="list-group-item" onclick="changeState(this)">子频带1</a>
+            <a id="btn8" class="list-group-item" onclick="changeState(this)">子频带2</a>
+            <a id="btn9" class="list-group-item" onclick="changeState(this)">子频带3</a>
+            <a id="btn10" class="list-group-item" onclick="changeState(this)">子频带4</a>
+            <a id="btn11" class="list-group-item" onclick="changeState(this)">子频带5</a>
+            <a id="btn12" class="list-group-item" onclick="changeState(this)">子频带6</a>
+            <a id="btn13" class="list-group-item" onclick="changeState(this)">子频带7</a>
+            <a id="btn14" class="list-group-item" onclick="changeState(this)">子频带8</a>
           </div>
+          <script type="text/javascript">
+            function changeState(element) {
+              var ele = document.getElementById(element.id)
+              if (ele.className == "list-group-item active") {
+                ele.className = "list-group-item";
+              } else {
+                ele.className = "list-group-item active";
+              }
+            }
+          </script>
         </div>
         <div class="col-md-9">
-          <img src="/static/medias/bearing_health_1.jpg" width="800"/>
-      </div>
+          <!-- <img src="/static/medias/bearing_health_1.jpg" width="800"/> -->
+          <div style="width:100%;">
+            <canvas id="canvas"></canvas>
+          </div>
+          <br/><br/>
+          <script>
+            var timeFormat = 'MM/DD/YYYY HH:mm';
 
+            function newDate(days) {
+              return moment().add(days, 'd').toDate();
+            }
+
+            function newDateString(days) {
+              return moment().add(days, 'd').format(timeFormat);
+            }
+
+            function randomNumber(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
+            function newDataSet(totalNum, coeff, offset) {
+              xs = [];
+              ys = [];
+              random_ys = [];
+              for (var i = 0; i < totalNum; i++) {
+                xs.push(i.toFixed(0));
+                ys.push(i * coeff + offset);
+                range = totalNum * coeff / 10;
+                random_ys.push(randomNumber(-range, range) + coeff * i + offset);
+              }
+              return [xs, ys, random_ys];
+            }
+
+            var res = newDataSet(100, 3, 0.7);
+            var myLabels = res[0];
+            var myYs = res[1];
+            var myRandomYs = res[2];
+
+            var color = Chart.helpers.color;
+            var config = {
+              type: 'line',
+              data: {
+                labels: myLabels,
+                datasets: [{
+                  label: '轴承1-1 拟合值',
+                  backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+                  borderColor: window.chartColors.red,
+                  fill: false,
+                  pointRadius: 0,
+                  data: myYs,
+                }, {
+                  label: '轴承1-1 真实值',
+                  backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+                  borderColor: window.chartColors.blue,
+                  fill: false,
+                  data: myRandomYs,
+                }]
+              },
+              options: {
+                title: {
+                  text: 'Chart.js Time Scale'
+                },
+                scales: {
+                  xAxes: [{
+                    scaleLabel: {
+                      display: true,  
+                      labelString: 'Time'
+                    }
+                  }],
+                  yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Value'
+                    }
+                  }]
+                },
+              }
+            };
+
+            window.onload = function() {
+              var ctx = document.getElementById('canvas').getContext('2d');
+              window.myLine = new Chart(ctx, config);
+
+            };
+
+            document.getElementById('randomizeData').addEventListener('click', function() {
+              config.data.datasets.forEach(function(dataset) {
+                dataset.data.forEach(function(dataObj, j) {
+                  if (typeof dataObj === 'object') {
+                    dataObj.y = randomScalingFactor();
+                  } else {
+                    dataset.data[j] = randomScalingFactor();
+                  }
+                });
+              });
+
+              window.myLine.update();
+            });
+          </script>
+        </div>
+      </div>
     </div>
 
     <!-- Bootstrap core JavaScript
