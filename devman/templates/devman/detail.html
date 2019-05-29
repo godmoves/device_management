@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>设备详情</title>
+    <title>设备详情: {{ device.device_name }}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -54,16 +54,16 @@
 
     <div class="container-fluid" style="margin: 0 auto; width: 1200px">
       <!-- head nav tabs start -->
-<!--       <ul class="nav nav-tabs" role="tablist">
+      <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="">设备详情</a></li>
         <li role="presentation"><a href="{% url 'devman:repair' device.id %}">维护历史</a></li>
         <li role="presentation"><a href="{% url 'devman:error' device.id %}">异常历史</a></li>
-      </ul> -->
+      </ul>
       <!-- head nav tabs end -->
 
       <!-- head line start -->
       <div class="page-header">
-        <h2>设备详情</h2>
+        <h2>设备详情: {{ device.device_name }}</h2>
       </div>
       <!-- head line end -->
 
@@ -100,45 +100,48 @@
       <!-- device info end -->
 
       <!-- crane figure start -->
-      <div class="col-sm-5">
-        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556604727509&di=99a4628f42239d8b0d6e2c1c1f586984&imgtype=0&src=http%3A%2F%2Fwww.tailizhineng.com%2FimageRepository%2F8fb5dd6e-4341-48f2-a29b-bb4ee90a66b6.jpg" class="img-rounded" height="350"/>
+      <div class="row" align="center">
+        <img src="/static/medias/crane.png" class="img-rounded" width="1000"/>
       </div>
       <!-- crane figure end -->
 
-      <div class="col-sm-6">
+      <div class="row">
         <!-- device info start -->
-        <div class="list-group">
-          <h4>
-            <a class="list-group-item active"><b>设备信息</b></a>
-            <a class="list-group-item"><b>设备ID:</b> {{ device.device_id }}</a>
-            <a class="list-group-item"><b>设备类型:</b> {{ device.device_type }}</a>
-            <a class="list-group-item"><b>设备状态:</b>
-              <script type="text/javascript">
-                function display_device_status(status) {
-                  if (status == "running") {
-                    document.write("<span class='label label-success'>运行中</span>")
-                  } else if (status == "error") {
-                    document.write("<span class='label label-danger'>异常</span>")
-                  } else if (status == "repairing") {
-                    document.write("<span class='label label-info'>修理中</span>")
-                  } else {
-                    document.write("<span class='label label-default'>停止</span>")
+        <div class="col-sm-6">
+          <div class="list-group">
+            <h4>
+              <a class="list-group-item active"><b>设备信息</b></a>
+              <a class="list-group-item"><b>设备ID:</b> {{ device.device_id }}</a>
+              <a class="list-group-item"><b>设备类型:</b> {{ device.device_type }}</a>
+              <a class="list-group-item"><b>设备状态:</b>
+                <script type="text/javascript">
+                  function display_device_status(status) {
+                    if (status == "running") {
+                      document.write("<span class='label label-success'>运行中</span>")
+                    } else if (status == "error") {
+                      document.write("<span class='label label-danger'>异常</span>")
+                    } else if (status == "repairing") {
+                      document.write("<span class='label label-info'>修理中</span>")
+                    } else {
+                      document.write("<span class='label label-default'>停止</span>")
+                    }
                   }
-                }
 
-                var status = "{{ device.device_status|safe }}"
-                display_device_status(status)
-              </script>
-            </a>
-            <a class="list-group-item"><b>创建日期:</b> {{ device.device_date }}</a>
-            <a class="list-group-item"><b>传感器数量:</b> {{ device.sensor_set.count }}</a>
-          </h4>
+                  var status = "{{ device.device_status|safe }}"
+                  display_device_status(status)
+                </script>
+              </a>
+              <a class="list-group-item"><b>创建日期:</b> {{ device.device_date }}</a>
+              <a class="list-group-item"><b>传感器数量:</b> {{ device.sensor_set.count }}</a>
+            </h4>
+          </div>
         </div>
         <!-- device info end -->
 
         <!-- sensor info start -->
-        <font size="5">传感器信息</font>
-        <table class="table">
+        <div class="col-sm-6">
+          <font size="5">传感器信息</font>
+          <table class="table">
             <thead>
               <tr>
                 <th>传感器名称</th>
@@ -158,8 +161,9 @@
               {% endfor %}
             </tbody>
           </table>
+        </div>
+        <!-- sensor info end -->
       </div>
-      <!-- sensor info end -->
 
       <!-- history data chart start -->
       <!-- <div style="margin: 0 auto; width: 1200px">

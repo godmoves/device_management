@@ -106,7 +106,12 @@
               for  (var i = 0; i < btns.length; i++) {
                 document.getElementById(btns[i]).className = "btn btn-default";
               }
-              document.getElementById(element.id).className = "btn btn-info";
+              document.getElementById(element.id).className = "btn btn-info"
+              // if (document.getElementById(element.id).className == "btn btn-info") {
+              //   document.getElementById(element.id).className  = "btn btn-default";
+              // } else {
+              //   document.getElementById(element.id).className = "btn btn-info";
+              // }
             }
           </script>
           <div class="row" style="margin-top: 25px">
@@ -114,41 +119,12 @@
               <canvas id="canvas"></canvas>
             </div>
             <script>
-              var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
               var config = {
                 type: 'line',
                 data: {
-                  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                  labels: ['0', '10', '20', '30', '40', '50', '60'],
                   datasets: [{
-                    label: 'Instance 0',
-                    fill: false,
-                    backgroundColor: window.chartColors.red,
-                    borderColor: window.chartColors.red,
-                    data: [
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor()
-                    ],
-                  }, {
-                    label: 'Instance 1000',
-                    fill: false,
-                    backgroundColor: window.chartColors.blue,
-                    borderColor: window.chartColors.blue,
-                    data: [
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor(),
-                      randomScalingFactor()
-                    ],
-                  }, {
-                    label: 'Instance 2000',
+                    label: '振动',
                     fill: false,
                     backgroundColor: window.chartColors.yellow,
                     borderColor: window.chartColors.yellow,
@@ -161,6 +137,34 @@
                       randomScalingFactor(),
                       randomScalingFactor()
                     ],
+                  // }, {
+                  //   label: '体积流量',
+                  //   fill: false,
+                  //   backgroundColor: window.chartColors.blue,
+                  //   borderColor: window.chartColors.blue,
+                  //   data: [
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor()
+                  //   ],
+                  // }, {
+                  //   label: '压力',
+                  //   fill: false,
+                  //   backgroundColor: window.chartColors.yellow,
+                  //   borderColor: window.chartColors.yellow,
+                  //   data: [
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor(),
+                  //     randomScalingFactor()
+                  //   ],
                   }]
                 },
                 options: {
@@ -182,15 +186,15 @@
                       display: true,
                       scaleLabel: {
                         display: true,
-                        labelString: 'Month'
+                        labelString: '时间(s)'
                       }
                     }],
                     yAxes: [{
                       display: true,
                       scaleLabel: {
                         display: true,
-                        labelString: 'Value'
-                      }
+                        labelString: '数值'
+                      },
                     }]
                   }
                 }

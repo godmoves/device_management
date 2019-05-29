@@ -84,12 +84,12 @@
         </div>
       </div>
       
-      <div class="col-md-7" style="background: #F5F5F5; margin-left: 20px;">
+     <!--  <div class="col-md-7" style="background: #F5F5F5; margin-left: 20px;">
         <h3>状态判断</h3>
         <div class="row">
           <div class="col-md-4" style="text-align:center">
             <h2>
-              <span class="label label-primary">状态0</span>
+              <span class="label label-primary">全效</span>
               <br/><br/>
               <span class="label label-default">0.03</span>
               <br/><br/>
@@ -100,7 +100,7 @@
           </div>
           <div class="col-md-4" style="text-align:center">
             <h2>
-              <span class="label label-primary">状态1</span>
+              <span class="label label-primary">部分失效</span>
               <br/><br/>
               <span class="label label-success">0.93</span>
               <br/><br/>
@@ -111,7 +111,7 @@
           </div>
           <div class="col-md-4" style="text-align:center">
             <h2>
-              <span class="label label-primary">状态2</span>
+              <span class="label label-primary">接近完全失效</span>
               <br/><br/>
               <span class="label label-default">0.04</span>
               <br/><br/>
@@ -130,25 +130,25 @@
 
             function colorize(opaque, ctx) {
               var v = ctx.dataset.data[ctx.dataIndex];
-              var c = v < 0.4 ? '#696969'
+              var c = v < 0.3 ? '#696969'
                 : v < 0.8 ? '#0358B6'
                 : '#44DE28';
 
-              return opaque ? c : utils.transparentize(c, 1 - Math.abs(v / 150));
+              return opaque ? c : utils.transparentize(c, 0.5);
             }
 
-            function generateData() {
+            function generateData(valMin, valMax) {
               return utils.numbers({
                 count: DATA_COUNT,
-                min: 0,
-                max: 1,
+                min: valMin,
+                max: valMax,
               });
             }
 
             var data = {
               labels: ["10","20","30","40","50","60"],
               datasets: [{
-                data: generateData()
+                data: generateData(0, 0.2)
               }]
             };
 
@@ -161,6 +161,15 @@
                   borderColor: colorize.bind(null, true),
                   borderWidth: 2
                 }
+              },
+              scales: {
+                yAxes: [{
+                  display: true,
+                  ticks: {
+                    min: 0.0,
+                    max: 1.0,
+                  }
+                }]
               }
             };
 
@@ -173,7 +182,8 @@
             data = {
               labels: ["10","20","30","40","50","60"],
               datasets: [{
-                data: generateData()
+                data: [0.12, 0.15, 0.14, 0.11, 0.33, 0.9]
+                // data: generateData(0, 1)
               }]
             };
 
@@ -186,7 +196,7 @@
             data = {
               labels: ["10","20","30","40","50","60"],
               datasets: [{
-                data: generateData()
+                data: generateData(0, 0.2)
               }]
             };
 
@@ -203,17 +213,17 @@
         <div class="row" style="text-align:center">
           <button type="button" class="btn btn-default">诊断结果</button>
           &nbsp;&nbsp;&nbsp;
-          <button type="button" class="btn btn-warning">接近失效</button>
+          <button type="button" class="btn btn-warning">部分失效</button>
         </div>
         <br/>
-      </div>
+      </div> -->
 
-  <!--     <div class="col-md-7" style="background: #F5F5F5; margin-left: 20px;">
+      <div class="col-md-7" style="background: #F5F5F5; margin-left: 20px;">
         <h3>状态判断</h3>
         <div class="row">
           <div class="col-md-4" style="text-align:center">
             <h2>
-              <span class="label label-primary">状态0</span>
+              <span class="label label-primary">全效</span>
               <br/><br/>
               <span class="label label-default">0.03</span>
               <br/><br/>
@@ -224,7 +234,7 @@
           </div>
           <div class="col-md-4" style="text-align:center">
             <h2>
-              <span class="label label-primary">状态1</span>
+              <span class="label label-primary">部分失效</span>
               <br/><br/>
               <span class="label label-default">0.04</span>
               <br/><br/>
@@ -235,7 +245,7 @@
           </div>
           <div class="col-md-4" style="text-align:center">
             <h2>
-              <span class="label label-primary">状态2</span>
+              <span class="label label-primary">接近完全失效</span>
               <br/><br/>
               <span class="label label-default">0.04</span>
               <br/><br/>
@@ -258,21 +268,21 @@
                 : v < 0.8 ? '#0358B6'
                 : '#44DE28';
 
-              return opaque ? c : utils.transparentize(c, 1 - Math.abs(v / 150));
+              return opaque ? c : utils.transparentize(c, 0.5);
             }
 
-            function generateData() {
+            function generateData(valMin, valMax) {
               return utils.numbers({
                 count: DATA_COUNT,
-                min: 0,
-                max: 0.7,
+                min: valMin,
+                max: valMax,
               });
             }
 
             var data = {
               labels: ["10","20","30","40","50","60"],
               datasets: [{
-                data: generateData()
+                data: generateData(0, 0.2)
               }]
             };
 
@@ -285,6 +295,15 @@
                   borderColor: colorize.bind(null, true),
                   borderWidth: 2
                 }
+              },
+              scales: {
+                yAxes: [{
+                  display: true,
+                  ticks: {
+                    min: 0.0,
+                    max: 1.0,
+                  }
+                }]
               }
             };
 
@@ -297,7 +316,7 @@
             data = {
               labels: ["10","20","30","40","50","60"],
               datasets: [{
-                data: generateData()
+                data: generateData(0, 0.2)
               }]
             };
 
@@ -310,7 +329,7 @@
             data = {
               labels: ["10","20","30","40","50","60"],
               datasets: [{
-                data: generateData()
+                data: generateData(0, 0.2)
               }]
             };
 
@@ -333,7 +352,7 @@
           <input type="text" size="10">
         </div>
         <br/>
-      </div> -->
+      </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
