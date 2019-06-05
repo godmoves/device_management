@@ -33,7 +33,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'devman:overview' %}">设备管理</a>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">CRANEHub</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -78,13 +78,15 @@
           <input type="text" size="10" value="100">
           <br/>
           <div class="row" style="margin-top: 15px">
-            <a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'data' %}"><button type="button" class="btn btn-default">&nbsp;返回&nbsp;</button></a>
+            <a href="{% url 'devman:sensor' sensor.sensor_type sensor.id 'data' %}">
+              <button type="button" class="btn btn-default">&nbsp;返回&nbsp;</button>
+            </a>
           </div>
           <br/>
         </div>
       </div>
       
-     <!--  <div class="col-md-7" style="background: #F5F5F5; margin-left: 20px;">
+<!--       <div class="col-md-7" style="background: #F5F5F5; margin-left: 20px;">
         <h3>状态判断</h3>
         <div class="row">
           <div class="col-md-4" style="text-align:center">
@@ -343,14 +345,21 @@
 
         <hr style="height:2px; border:none; border-top:2px dashed #555555;"/>
 
-        <div class="alert alert-danger" role="alert">
+        <div id="state_info" class="alert alert-danger" role="alert">
           <strong>诊断失败！</strong> 请进行人工诊断
         </div>
         <div class="row" style="text-align:center">
           <button type="button" class="btn btn-default">请输入实际状态</button>
           &nbsp;&nbsp;&nbsp;
           <input type="text" size="10">
+          <button type="button" class="btn btn-default" onclick="updateState()">&nbsp;提交&nbsp;</button>
         </div>
+        <script type="text/javascript">
+          function updateState() {
+            document.getElementById("state_info").innerHTML = "结果提交成功!";
+            document.getElementById("state_info").className = "alert alert-success";
+          }
+        </script>
         <br/>
       </div>
 

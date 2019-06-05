@@ -34,7 +34,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'devman:overview' %}">设备管理</a>
+          <a class="navbar-brand" href="{% url 'devman:overview' %}">CRANEHub</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -113,7 +113,7 @@
             }
 
             function randomSignalData(date, totalNum, currNum) {
-              var point = 300.0 / (totalNum - currNum + 10);
+              var point = 300.0 / (totalNum - currNum + 100);
               point = point + Math.random() * point / 2;
               if (currNum % 2 == 0) {
                 point = -point;
@@ -150,7 +150,7 @@
               type: 'bar',
               data: {
                 datasets: [{
-                  label: '横向振动信号',
+                  label: '振动信号',
                   backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
                   borderColor: window.chartColors.blue,
                   data: signal_data,
@@ -208,7 +208,7 @@
         <div class="col-md-3">
           <div class="list-group">
             <a class="list-group-item active">相关系数</a>
-            <a id="r_coeff" class="list-group-item">0.85</a>
+            <a id="r_coeff" class="list-group-item">0.69</a>
           </div>
           <!-- select class="selectpicker">
             <option>Mustard</option>
@@ -218,10 +218,10 @@
           <h5>特征选择</h5>
           <select class="form-control selectpicker" data-live-search="true">
             <optgroup label="时域RS特征">
-              <option value="1" selected="selected">F1</option>
+              <option value="1">F1</option>
             </optgroup>   
             <optgroup label="频域RS特征">
-              <option value="1">F2</option>
+              <option value="1" selected="selected">F2</option>
               <option value="2">F3</option>
               <option value="3">F4</option>
               <option value="4">F5</option>
@@ -239,18 +239,28 @@
              <option value="10">F15</option>
             </optgroup>                          
           </select>
+          <div class="row">
+            <div class="col-md-9">
+              <div class="row">
+              </div>
+            </div>
+            <div class="col-md-3">
+              </br>
+              <button type="button" class="btn btn-default btn-xs" style="font-size: 16px" onclick="changeFeatureState()">确定</button>
+            </div>
+          </div>
           <script type="text/javascript">
-            function changeFeatureState(element) {
-              if (document.getElementById(element.id).className == "list-group-item") {
-                // Update dataset after we change the data catagory
-                feature_cfg.data.datasets.forEach(function(dataset) {
-                  dataset.data = randomFeatureDataset(seg1, seg2, seg3);
-                });
+            function changeFeatureState() {
+              // if (document.getElementById(element.id).className == "list-group-item") {
+              // Update dataset after we change the data catagory
+              feature_cfg.data.datasets.forEach(function(dataset) {
+                dataset.data = randomFeatureDataset(seg1, seg2, seg3);
+              });
 
-                feature_chart.update();
+              feature_chart.update();
 
-                document.getElementById("r_coeff").innerHTML = randomNumber(0.8, 0.9).toFixed(2);
-              }
+              document.getElementById("r_coeff").innerHTML = randomNumber(0.65, 0.75).toFixed(2);
+              // }
             }
           </script>
         </div>
@@ -309,7 +319,7 @@
               type: 'bar',
               data: {
                 datasets: [{
-                  label: '时域RS特征',
+                  label: '频域RS特征',
                   backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
                   borderColor: window.chartColors.blue,
                   data: feature_data,
