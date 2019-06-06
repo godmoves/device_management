@@ -2,6 +2,8 @@ from django.http import Http404
 from django.shortcuts import render
 
 from .models import Device, Sensor
+# from .applications.bearing.cnnblstm import *
+# from .applications.hydraulic.BNN_L2 import *
 
 
 def overview(request):
